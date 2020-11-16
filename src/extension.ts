@@ -54,7 +54,7 @@ export function activate(context: vscode.ExtensionContext) {
 			return;
     }
     
-    refreshTree(activeEditor);
+    
     console.log(tree.length);
 
 		const text = activeEditor.document.getText();
@@ -67,22 +67,8 @@ export function activate(context: vscode.ExtensionContext) {
     for (let i = 0; i < tree.length; i++) {
       var line = activeEditor.document.lineAt(tree[i].selectionRange.start.line);
       var word = line.text.substring(tree[i].selectionRange.start.character, tree[i].selectionRange.end.character);
-      console.log(word);
-      varNames.add(word);
-
-      // var VarColor = colors[countColor];
-      // countColor = countColor + 1;
-      // if (countColor == 5){
-      //   countColor = 0;
-      // }
-      // var variableDecorator = vscode.window.createTextEditorDecorationType({
-      //   // cursor: 'crosshair',
-      //   // use a themable color. See package.json for the declaration and default values.
-      //   color: VarColor
-      // });
-      // const decoration = { range: new vscode.Range(tree[i].selectionRange.start.line, tree[i].selectionRange.start.character, tree[i].selectionRange.end.line, tree[i].selectionRange.end.character), hoverMessage: 'Variable **' };
-      // variableDecoration.push(decoration);
-      // activeEditor.setDecorations(variableDecorator, variableDecoration);
+      // console.log(word.split(/[:=]/)[0]);
+      varNames.add(word.split(/[:=]/)[0]);
 
     }
     // console.log(tree.length);
@@ -101,20 +87,30 @@ export function activate(context: vscode.ExtensionContext) {
         color: VarColor
       });
       var test = a[i];
-      if (typeof test === "string" && test.length > 3) {
+      if (typeof test === "string") {
         // console.log("regex");
         // console.log(test);
         // console.log(VarColor);
-        var possibleSymbolsAround = '[,\\s\\.=\\)\\(\\[\\]\\>\\-\\:\r\n]';
-        const varregEx = new RegExp(possibleSymbolsAround + test + possibleSymbolsAround, "g")
+        const varregExFunc = new RegExp('' + test, "g")
+        var possibleSymbolsBefore = '(?<!(def\\s))';
+        const varregEx = new RegExp(possibleSymbolsBefore + test, "g")
         let matchVar; 
         while ((matchVar = varregEx.exec(text))) {
-            // console.log(" test regex");
+          var texttmp = text.substring(matchVar.index - 1, matchVar.index + matchVar[0].length + 1)
+          // console.log(texttmp);
+          var possibleSymbolsBefore = '[,\\s\\.=\\)\\(\\[\\]\\>\\-\\:\r\n]';
+          var possibleSymbolsAfter = '[,\\s\\.=\\)\\[\\]\\>\\-\\:\r\n]';
+          var notyperegex = new RegExp(possibleSymbolsBefore + test + possibleSymbolsAfter);
+          var mnotype: RegExpExecArray | null;
+          mnotype = notyperegex.exec(texttmp)
+          if(mnotype){
+            // console.log(" test regex good");
             // console.log(test);
-          const startPos = activeEditor.document.positionAt(matchVar.index + 1);
-          const endPos = activeEditor.document.positionAt(matchVar.index + matchVar[0].length - 1);
-          const decoration = { range: new vscode.Range(startPos, endPos), hoverMessage: 'Variable **' + matchVar[0] + '**' };
-          variableDecoration.push(decoration);
+            const startPos = activeEditor.document.positionAt(matchVar.index);
+            const endPos = activeEditor.document.positionAt(matchVar.index + matchVar[0].length);
+            const decoration = { range: new vscode.Range(startPos, endPos), hoverMessage: 'Variable **' + matchVar[0] + '**' };
+            variableDecoration.push(decoration);
+          }
         }
         activeEditor.setDecorations(variableDecorator, variableDecoration);
       }
@@ -134,6 +130,7 @@ export function activate(context: vscode.ExtensionContext) {
 		triggerUpdateDecorations();
 	}
 
+
 	vscode.window.onDidChangeActiveTextEditor(editor => {
 		activeEditor = editor;
 		if (editor) {
@@ -144,6 +141,20 @@ export function activate(context: vscode.ExtensionContext) {
 	vscode.workspace.onDidChangeTextDocument(event => {
 		if (activeEditor && event.document === activeEditor.document) {
 			triggerUpdateDecorations();
+		}
+  }, null, context.subscriptions);
+  
+  vscode.workspace.onDidSaveTextDocument(event => {
+		if (activeEditor && event === activeEditor.document) {
+      console.log("REFRESH");
+			refreshTree(activeEditor);
+		}
+  }, null, context.subscriptions);
+  
+  vscode.workspace.onDidOpenTextDocument(event => {
+		if (activeEditor && event === activeEditor.document) {
+      console.log("OPen document");
+			refreshTree(activeEditor);
 		}
 	}, null, context.subscriptions);
 
