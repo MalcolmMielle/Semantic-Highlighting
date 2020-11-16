@@ -1,64 +1,19 @@
-'use strict';
 import * as vscode from 'vscode';
 
+
+// this method is called when vs code is activated
 export function activate(context: vscode.ExtensionContext) {
-  let symbolKindsSet: Set<string>;
-  let symbolIndex = 0;
+
+  // console.log('decorator sample is activated');
+  
+  let variableNames: Set<string>;
+
+  let colors: Array<string> = ["#529D52", "#BE7070", "#3D7676", "#BE9970", "#9D527C"]
+
   let tree: Array<vscode.DocumentSymbol> = [];
-  let dirtyTree = true;
+  let timeout: NodeJS.Timer | undefined = undefined;
 
-  const reloadConfiguration = () => {
-    // Get the array of allowed symbols from the config file
-    let symbolKindsArray: Array<string> | undefined = vscode.workspace.getConfiguration().get<Array<string>>("gotoNextPreviousMember.symbolKinds");
-
-    // If it's empty there's nothing to do...
-    if (symbolKindsArray === undefined) {
-      return;
-    }
-
-    // Convert to lowercase make config file case-insensitive
-    symbolKindsArray = symbolKindsArray.map(key => key.toLowerCase());
-
-    // Convert to a Set for faster lookups
-    symbolKindsSet = new Set<string>(symbolKindsArray);
-
-    // Reload the symbol tree
-    dirtyTree = true;
-  };
-
-  const checkSymbolKindPermitted = (symbolKind : vscode.SymbolKind) : boolean => {
-    // https://code.visualstudio.com/api/references/vscode-api#SymbolKind
-    return symbolKindsSet.size === 0 || (
-      (symbolKind === vscode.SymbolKind.Array         && symbolKindsSet.has("array")        ) ||
-      (symbolKind === vscode.SymbolKind.Boolean       && symbolKindsSet.has("boolean")      ) ||
-      (symbolKind === vscode.SymbolKind.Class         && symbolKindsSet.has("class")        ) ||
-      (symbolKind === vscode.SymbolKind.Constant      && symbolKindsSet.has("constant")     ) ||
-      (symbolKind === vscode.SymbolKind.Constructor   && symbolKindsSet.has("constructor")  ) ||
-      (symbolKind === vscode.SymbolKind.Enum          && symbolKindsSet.has("enum")         ) ||
-      (symbolKind === vscode.SymbolKind.EnumMember    && symbolKindsSet.has("enummember")   ) ||
-      (symbolKind === vscode.SymbolKind.Event         && symbolKindsSet.has("event")        ) ||
-      (symbolKind === vscode.SymbolKind.Field         && symbolKindsSet.has("field")        ) ||
-      (symbolKind === vscode.SymbolKind.File          && symbolKindsSet.has("file")         ) ||
-      (symbolKind === vscode.SymbolKind.Function      && symbolKindsSet.has("function")     ) ||
-      (symbolKind === vscode.SymbolKind.Interface     && symbolKindsSet.has("interface")    ) ||
-      (symbolKind === vscode.SymbolKind.Key           && symbolKindsSet.has("key")          ) ||
-      (symbolKind === vscode.SymbolKind.Method        && symbolKindsSet.has("method")       ) ||
-      (symbolKind === vscode.SymbolKind.Module        && symbolKindsSet.has("module")       ) ||
-      (symbolKind === vscode.SymbolKind.Namespace     && symbolKindsSet.has("namespace")    ) ||
-      (symbolKind === vscode.SymbolKind.Null          && symbolKindsSet.has("null")         ) ||
-      (symbolKind === vscode.SymbolKind.Number        && symbolKindsSet.has("number")       ) ||
-      (symbolKind === vscode.SymbolKind.Object        && symbolKindsSet.has("object")       ) ||
-      (symbolKind === vscode.SymbolKind.Operator      && symbolKindsSet.has("operator")     ) ||
-      (symbolKind === vscode.SymbolKind.Package       && symbolKindsSet.has("package")      ) ||
-      (symbolKind === vscode.SymbolKind.Property      && symbolKindsSet.has("property")     ) ||
-      (symbolKind === vscode.SymbolKind.String        && symbolKindsSet.has("string")       ) ||
-      (symbolKind === vscode.SymbolKind.Struct        && symbolKindsSet.has("struct")       ) ||
-      (symbolKind === vscode.SymbolKind.TypeParameter && symbolKindsSet.has("typeparameter")) ||
-      (symbolKind === vscode.SymbolKind.Variable      && symbolKindsSet.has("variable")     )
-    );
-  };
-
-  const refreshTree = async (editor: vscode.TextEditor) => {
+    const refreshTree = async (editor: vscode.TextEditor) => {
     tree = (await vscode.commands.executeCommand<(vscode.DocumentSymbol)[]>(
       "vscode.executeDocumentSymbolProvider",
       editor.document.uri
@@ -70,7 +25,7 @@ export function activate(context: vscode.ExtensionContext) {
       const flattenedSymbols: vscode.DocumentSymbol[] = [];
       const addSymbols = (flattenedSymbols: vscode.DocumentSymbol[], results: vscode.DocumentSymbol[]) => {
         results.forEach((symbol: vscode.DocumentSymbol) => {
-          if(checkSymbolKindPermitted(symbol.kind)) {
+          if(symbol.kind == vscode.SymbolKind.Variable ) {
             flattenedSymbols.push(symbol);
           }
           if(symbol.children && symbol.children.length > 0) {
@@ -91,117 +46,88 @@ export function activate(context: vscode.ExtensionContext) {
     })) || [];
   };
 
-  const activeEditorChangeListener = vscode.window.onDidChangeActiveTextEditor(e => {
-    dirtyTree = true;
-    tree = [];
-    symbolIndex = 0;
-  });
+	let activeEditor = vscode.window.activeTextEditor;
 
-  const documentChangeListener = vscode.workspace.onDidChangeTextDocument(e => {
-    dirtyTree = true;
-    tree = [];
-    symbolIndex = 0;
-  });
-
-  const setSymbolIndex = (cursorLine: number, cursorCharacter: number, directionNext: boolean, prevSymbolIndex: number) => {
-    let member;
-
-    if(directionNext) {
-      symbolIndex = -1;
-      do {
-        symbolIndex++;
-        member = tree[symbolIndex].selectionRange.start;
-      } while ((member.line < cursorLine || member.line === cursorLine && member.character <= cursorCharacter || symbolIndex === prevSymbolIndex) && symbolIndex < tree.length - 1);
-    } else {
-      symbolIndex = tree.length;
-      do {
-        symbolIndex--;
-        member = tree[symbolIndex].selectionRange.start;
-      } while ((member.line > cursorLine || member.line === cursorLine && member.character >= cursorCharacter || symbolIndex === prevSymbolIndex) && symbolIndex > 0);
+	function updateDecorations() {
+		if (!activeEditor) {
+			return;
     }
-  };
+    
+    refreshTree(activeEditor);
+    console.log(tree.length);
 
-  const previousMemberCommand = vscode.commands.registerTextEditorCommand("gotoNextPreviousMember.previousMember", async (editor: vscode.TextEditor) => {
-      let symbol;
+		const text = activeEditor.document.getText();
+    
+    const variableDecoration: vscode.DecorationOptions[] = [];
 
-      if (tree.length === 0 || dirtyTree) {
-        await refreshTree(editor);
-        dirtyTree = false;
-      }
-
-      // If there are still no symbols skip the rest of the function
-      if (tree.length === 0) {
-        return;
-      }
-
-      const activeCursor = editor.selection.active;
-      setSymbolIndex(activeCursor.line, activeCursor.character, false, symbolIndex);
-
-      symbol = tree[symbolIndex];
-
-      const selectionRangeText = editor.document.getText(symbol.selectionRange);
-      const nameIndex = Math.max(0, selectionRangeText.indexOf(symbol.name));
-
-      if (symbol) {
-        editor.selection = new vscode.Selection(
-          symbol.selectionRange.start.line,
-          symbol.selectionRange.start.character + nameIndex,
-          symbol.selectionRange.start.line,
-          symbol.selectionRange.start.character + nameIndex
-        );
-        vscode.commands.executeCommand("revealLine", {
-          lineNumber: symbol.selectionRange.start.line
-        });
-      }
-      vscode.window.setStatusBarMessage("Previous Member", 1000);
+    var varNames = new Set();
+    // variableNames.clear();
+    for (let i = 0; i < tree.length; i++) {
+      var line = activeEditor.document.lineAt(tree[i].selectionRange.start.line);
+      var word = line.text.substring(tree[i].selectionRange.start.character, tree[i].selectionRange.end.character);
+      console.log(word);
+      varNames.add(word);
     }
-  );
-
-  const nextMemberCommand = vscode.commands.registerTextEditorCommand("gotoNextPreviousMember.nextMember", async (editor: vscode.TextEditor) => {
-      let symbol;
-
-      if (tree.length === 0 || dirtyTree) {
-        await refreshTree(editor);
-        dirtyTree = false;
+    console.log(tree.length);
+    var a = Array.from(varNames);
+    var countColor = 0;
+    for (let i = 0; i < a.length; i++) {
+      
+      var VarColor = colors[countColor];
+      countColor = countColor + 1;
+      if (countColor == 5){
+        countColor = 0;
       }
-
-      // If there are still no symbols skip the rest of the function
-      if (tree.length === 0) {
-        return;
+      var variableDecorator = vscode.window.createTextEditorDecorationType({
+        // cursor: 'crosshair',
+        // use a themable color. See package.json for the declaration and default values.
+        color: VarColor
+      });
+      var test = a[i];
+      if (typeof test === "string") {
+        // console.log("regex");
+        // console.log(test);
+        // console.log(VarColor);
+        const varregEx = new RegExp(test, "g")
+        let matchVar; 
+        while ((matchVar = varregEx.exec(text))) {
+            // console.log(" test regex");
+            // console.log(test);
+          const startPos = activeEditor.document.positionAt(matchVar.index);
+          const endPos = activeEditor.document.positionAt(matchVar.index + matchVar[0].length);
+          const decoration = { range: new vscode.Range(startPos, endPos), hoverMessage: 'Variable **' + matchVar[0] + '**' };
+          variableDecoration.push(decoration);
+        }
+        activeEditor.setDecorations(variableDecorator, variableDecoration);
       }
-
-      const activeCursor = editor.selection.active;
-      setSymbolIndex(activeCursor.line, activeCursor.character, true, symbolIndex);
-
-      symbol = tree[symbolIndex];
-
-      const selectionRangeText = editor.document.getText(symbol.selectionRange);
-      const nameIndex = Math.max(0, selectionRangeText.indexOf(symbol.name));
-
-      if (symbol) {
-        editor.selection = new vscode.Selection(
-          symbol.selectionRange.start.line,
-          symbol.selectionRange.start.character + nameIndex,
-          symbol.selectionRange.start.line,
-          symbol.selectionRange.start.character + nameIndex
-        );
-        vscode.commands.executeCommand("revealLine", {
-          lineNumber: symbol.selectionRange.start.line
-        });
-      }
-      vscode.window.setStatusBarMessage("Next Member", 1000);
+      
     }
-  );
+	}
 
-  context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(e => {
-    if (e.affectsConfiguration('gotoNextPreviousMember.symbolKinds')) {
-      if (vscode.window.activeTextEditor) {
-        reloadConfiguration();
-      }
-    }
-  }));
+	function triggerUpdateDecorations() {
+		if (timeout) {
+			clearTimeout(timeout);
+			timeout = undefined;
+		}
+		timeout = setTimeout(updateDecorations, 500);
+	}
 
-  context.subscriptions.push(previousMemberCommand, nextMemberCommand, documentChangeListener, activeEditorChangeListener);
+	if (activeEditor) {
+		triggerUpdateDecorations();
+	}
 
-  reloadConfiguration();
+	vscode.window.onDidChangeActiveTextEditor(editor => {
+		activeEditor = editor;
+		if (editor) {
+			triggerUpdateDecorations();
+		}
+	}, null, context.subscriptions);
+
+	vscode.workspace.onDidChangeTextDocument(event => {
+		if (activeEditor && event.document === activeEditor.document) {
+			triggerUpdateDecorations();
+		}
+	}, null, context.subscriptions);
+
 }
+

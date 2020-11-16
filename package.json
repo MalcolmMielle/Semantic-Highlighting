@@ -1,45 +1,47 @@
 {
-	"name": "semantic-highlights",
-	"displayName": "Semantic Highlights",
-	"description": "Color variable with a different color each",
+	"name": "semantic-highliting",
+	"description": "Does semantic highlight like Kdevelop",
 	"version": "0.0.1",
+	"publisher": "vscode-samples",
+	"license": "MIT",
 	"engines": {
-		"vscode": "^1.51.0"
+		"vscode": "^1.32.0"
+	},
+	"repository": {
+		"url": "https://github.com/MalcolmMielle/semantic-highliting"
 	},
 	"categories": [
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:semantic-highlights.helloWorld"
+		"*"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
-		"commands": [
+		"colors": [
 			{
-				"command": "semantic-highlights.helloWorld",
-				"title": "Hello World"
+				"id": "myextension.largeNumberBackground",
+				"description": "Background decoration color for large numbers",
+				"defaults": {
+					"dark": "#FF000055",
+					"light": "#FF000055",
+					"highContrast": "#FF000055"
+				}
 			}
 		]
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
 		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-		"pretest": "npm run compile && npm run lint",
-		"lint": "eslint src --ext ts",
-		"test": "node ./out/test/runTest.js"
+		"lint": "eslint . --ext .ts,.tsx",
+		"watch": "tsc -watch -p ./"
 	},
 	"devDependencies": {
-		"@types/vscode": "^1.51.0",
-		"@types/glob": "^7.1.3",
-		"@types/mocha": "^8.0.0",
-		"@types/node": "^12.11.7",
-		"eslint": "^7.9.0",
-		"@typescript-eslint/eslint-plugin": "^4.1.1",
-		"@typescript-eslint/parser": "^4.1.1",
-		"glob": "^7.1.6",
-		"mocha": "^8.1.3",
+		"@types/node": "^12.12.0",
+		"@typescript-eslint/eslint-plugin": "^3.0.2",
+		"@typescript-eslint/parser": "^3.0.2",
+		"eslint": "^7.1.0",
 		"typescript": "^4.0.2",
-		"vscode-test": "^1.4.0"
+		"@types/vscode": "^1.32.0"
 	}
 }
