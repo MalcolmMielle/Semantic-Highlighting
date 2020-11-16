@@ -26,6 +26,7 @@ export function activate(context: vscode.ExtensionContext) {
       const addSymbols = (flattenedSymbols: vscode.DocumentSymbol[], results: vscode.DocumentSymbol[]) => {
         results.forEach((symbol: vscode.DocumentSymbol) => {
           if(symbol.kind == vscode.SymbolKind.Variable ) {
+            
             flattenedSymbols.push(symbol);
           }
           if(symbol.children && symbol.children.length > 0) {
@@ -62,13 +63,29 @@ export function activate(context: vscode.ExtensionContext) {
 
     var varNames = new Set();
     // variableNames.clear();
+    var countColor = 0;
     for (let i = 0; i < tree.length; i++) {
       var line = activeEditor.document.lineAt(tree[i].selectionRange.start.line);
       var word = line.text.substring(tree[i].selectionRange.start.character, tree[i].selectionRange.end.character);
-      console.log(word);
+      // console.log(word);
       varNames.add(word);
+
+      // var VarColor = colors[countColor];
+      // countColor = countColor + 1;
+      // if (countColor == 5){
+      //   countColor = 0;
+      // }
+      // var variableDecorator = vscode.window.createTextEditorDecorationType({
+      //   // cursor: 'crosshair',
+      //   // use a themable color. See package.json for the declaration and default values.
+      //   color: VarColor
+      // });
+      // const decoration = { range: new vscode.Range(tree[i].selectionRange.start.line, tree[i].selectionRange.start.character, tree[i].selectionRange.end.line, tree[i].selectionRange.end.character), hoverMessage: 'Variable **' };
+      // variableDecoration.push(decoration);
+      // activeEditor.setDecorations(variableDecorator, variableDecoration);
+
     }
-    console.log(tree.length);
+    // console.log(tree.length);
     var a = Array.from(varNames);
     var countColor = 0;
     for (let i = 0; i < a.length; i++) {
@@ -84,17 +101,18 @@ export function activate(context: vscode.ExtensionContext) {
         color: VarColor
       });
       var test = a[i];
-      if (typeof test === "string") {
+      if (typeof test === "string" && test.length > 3) {
         // console.log("regex");
         // console.log(test);
         // console.log(VarColor);
-        const varregEx = new RegExp(test, "g")
+        var possibleSymbolsAround = '[,\\s\\.=\\)\\(\\[\\]\\>\\-\\:]';
+        const varregEx = new RegExp(possibleSymbolsAround + test + possibleSymbolsAround, "g")
         let matchVar; 
         while ((matchVar = varregEx.exec(text))) {
             // console.log(" test regex");
             // console.log(test);
-          const startPos = activeEditor.document.positionAt(matchVar.index);
-          const endPos = activeEditor.document.positionAt(matchVar.index + matchVar[0].length);
+          const startPos = activeEditor.document.positionAt(matchVar.index + 1);
+          const endPos = activeEditor.document.positionAt(matchVar.index + matchVar[0].length - 1);
           const decoration = { range: new vscode.Range(startPos, endPos), hoverMessage: 'Variable **' + matchVar[0] + '**' };
           variableDecoration.push(decoration);
         }
