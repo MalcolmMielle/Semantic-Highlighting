@@ -67,7 +67,7 @@ export function activate(context: vscode.ExtensionContext) {
     for (let i = 0; i < tree.length; i++) {
       var line = activeEditor.document.lineAt(tree[i].selectionRange.start.line);
       var word = line.text.substring(tree[i].selectionRange.start.character, tree[i].selectionRange.end.character);
-      // console.log(word);
+      console.log(word);
       varNames.add(word);
 
       // var VarColor = colors[countColor];
@@ -105,7 +105,7 @@ export function activate(context: vscode.ExtensionContext) {
         // console.log("regex");
         // console.log(test);
         // console.log(VarColor);
-        var possibleSymbolsAround = '[,\\s\\.=\\)\\(\\[\\]\\>\\-\\:]';
+        var possibleSymbolsAround = '[,\\s\\.=\\)\\(\\[\\]\\>\\-\\:\r\n]';
         const varregEx = new RegExp(possibleSymbolsAround + test + possibleSymbolsAround, "g")
         let matchVar; 
         while ((matchVar = varregEx.exec(text))) {
