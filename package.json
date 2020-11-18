@@ -1,6 +1,6 @@
 {
 	"name": "semantic-highliting",
-	"description": "Does semantic highlight like Kdevelop",
+	"description": "Does semantic highlight like Kdevelop and pycharm",
 	"version": "0.0.1",
 	"publisher": "vscode-samples",
 	"license": "MIT",
@@ -14,7 +14,7 @@
 		"Other"
 	],
 	"activationEvents": [
-		"*"
+		"onLanguage:python"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -43,5 +43,10 @@
 		"eslint": "^7.1.0",
 		"typescript": "^4.0.2",
 		"@types/vscode": "^1.32.0"
-	}
+	},
+	"keywords": [
+        "python",
+		"semantic",
+		"highlight"
+    ]
 }
