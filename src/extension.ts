@@ -23,9 +23,9 @@ function activate(context: vscode.ExtensionContext) {
   var workspaceState = context.workspaceState;
 
   var possibleSymbolsBeforeFunc = '((def\\s*))';
+  var selfSymbol = '(self\.)';
   var possibleSymbolsBefore = '[,\\s\\.=\\)\\(\\[\\]\\>\\-\\:\r\n{]';
   var possibleSymbolsAfter = '[,\\s\\.=\\)\\[\\]\\>\\-\\:\r\n}]';
-  // const notyperegex = new RegExp(possibleSymbolsBefore + test + possibleSymbolsAfter, "g");
 
   let tree: Array<vscode.DocumentSymbol> = [];
   var settings = workspace.getConfiguration('semantichighlights');
@@ -153,9 +153,9 @@ function activate(context: vscode.ExtensionContext) {
 
     var a = Array.from(varNames).sort();
     let mathes = new Map()
-    console.log(a.length);
+    // console.log(a.length);
     for (let i = 0; i < a.length; i++) {
-      console.log(a[i]);
+      // console.log(a[i]);
       
       
       var test = a[i];
@@ -164,18 +164,19 @@ function activate(context: vscode.ExtensionContext) {
 
         const regexVar = new RegExp(possibleSymbolsBefore + test + possibleSymbolsAfter, "g");
         const regexNotFunc = new RegExp(possibleSymbolsBeforeFunc)
+        const regexNotSelf = new RegExp(selfSymbol)
         var match;
         while (match = regexVar.exec(text)) {
 
-          var isDef = text.substring(match.index - 4, match.index)
-          if(!regexNotFunc.test(isDef)){
+          var isDef = text.substring(match.index - 3, match.index + 1)
+          var isSelf = text.substring(match.index - 4, match.index + 1)
+          if(!regexNotFunc.test(isDef) && !(regexNotSelf.test(isSelf))){
             var startPos = activeEditor.document.positionAt(match.index + 1);
             var endPos = activeEditor.document.positionAt(match.index + match[0].length - 1);
             var decoration = {
                 range: new vscode.Range(startPos, endPos)
             };
             var matchedValue = match[0].substring(1, match[0].length-1);
-            // console.log("matchedvalue");
             // console.log(matchedValue);
             if (mathes.has(matchedValue)) {
               // console.log("has");
