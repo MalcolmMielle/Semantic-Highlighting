@@ -12,6 +12,7 @@ function activate(context: vscode.ExtensionContext) {
   let colors: Array<string> = ["#529D52", "#BE7070", "#3D7676", "#BE9970", "#9D527C"];
   let timeout: NodeJS.Timer | undefined = undefined;
   var activeEditor = window.activeTextEditor;
+  var workspaceState = context.workspaceState;
 
   var possibleSymbolsBeforeFunc = '((def\\s*))';
   var selfSymbol = '(self\.)';
@@ -34,7 +35,8 @@ function activate(context: vscode.ExtensionContext) {
       const flattenedSymbols: vscode.DocumentSymbol[] = [];
       const addSymbols = (flattenedSymbols: vscode.DocumentSymbol[], results: vscode.DocumentSymbol[]) => {
         results.forEach((symbol: vscode.DocumentSymbol) => {
-          if(symbol.kind === vscode.SymbolKind.Variable) {
+          if(symbol.kind === vscode.SymbolKind.Variable ) {
+
             flattenedSymbols.push(symbol);
           }
           if(symbol.children && symbol.children.length > 0) {
@@ -54,6 +56,13 @@ function activate(context: vscode.ExtensionContext) {
       });
     })) || [];
   };
+
+
+  function init(settings: vscode.WorkspaceConfiguration) {
+    var customDefaultStyle = settings.get('defaultStyle');
+  }
+
+  init(settings);
 
   function updateDecorations() {
 
@@ -79,6 +88,8 @@ function activate(context: vscode.ExtensionContext) {
     for (let i = 0; i < a.length; i++) {
       var test = a[i];
       if (typeof test === "string" && test !== "self") {
+        const variableDecoration: vscode.DecorationOptions[] = [];
+
         const regexVar = new RegExp(possibleSymbolsBefore + test + possibleSymbolsAfter, "g");
         const regexNotFunc = new RegExp(possibleSymbolsBeforeFunc);
         const regexNotSelf = new RegExp(selfSymbol);
