@@ -1,14 +1,16 @@
 {
-	"name": "semantic-highliting",
+	"name": "semantic-highlighting",
 	"description": "Does semantic highlight like Kdevelop and pycharm",
-	"version": "0.0.1",
+	"version": "0.2.0",
 	"publisher": "MalcolmMielle",
 	"license": "MIT",
+	"icon": "images/coding.png",
+	"displayName": "Semantic highlighting",
 	"engines": {
 		"vscode": "^1.32.0"
 	},
 	"repository": {
-		"url": "https://gitlab.com/MalcolmMielle/semantic-highliting.git"
+		"url": "https://gitlab.com/MalcolmMielle/semantic-highlighting.git"
 	},
 	"categories": [
 		"Other"

@@ -1,12 +1,16 @@
-# semantic-highlights README
+# Semantic Highlights
 
-An extension to colorize variable each with their individual color.
+Colorizes each variable with their individual color.
 
 Compatible with python and pylance.
 
+WARNING: need pylance active AND a modification before it triggers.
+
 ## Features
 
-\!\[feature X\]\(images/feature-x.png\)
+![before](https://gitlab.com/MalcolmMielle/semantic-highlighting/-/raw/main/images/before.png)
+
+![after](https://gitlab.com/MalcolmMielle/semantic-highlighting/-/raw/main/images/after.png)
 
 <!-- > Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow. -->
 
@@ -26,7 +30,7 @@ This extension contributes the following settings:
 First release :).
 
 <!-- ----------------------------------------------------------------------------------------------------------- -->
-<!-- 
+<!--
 ## Working with Markdown
 
 **Note:** You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
@@ -41,3 +45,5 @@ First release :).
 * [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
 
 **Enjoy!** -->
+
+Icon from [Freepik](https://www.freepik.com/)
