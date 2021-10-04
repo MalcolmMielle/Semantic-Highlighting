@@ -12,10 +12,7 @@ function activate(context: vscode.ExtensionContext) {
   let colors: Array<string> = ["#529D52", "#BE7070", "#3D7676", "#BE9970", "#9D527C"];
   let timeout: NodeJS.Timer | undefined = undefined;
   var activeEditor = window.activeTextEditor;
-  var workspaceState = context.workspaceState;
 
-  var possibleSymbolsBeforeFunc = '((def\\s*))';
-  var selfSymbol = '(self\.)';
   var possibleSymbolsBefore = '[,\\s\\.=\\)\\(\\[\\]\\>\\-\\:\r\n{]';
   var possibleSymbolsAfter = '[,\\s\\.=\\)\\[\\]\\>\\-\\:\r\n}]';
 
@@ -36,7 +33,6 @@ function activate(context: vscode.ExtensionContext) {
       const addSymbols = (flattenedSymbols: vscode.DocumentSymbol[], results: vscode.DocumentSymbol[]) => {
         results.forEach((symbol: vscode.DocumentSymbol) => {
           if (symbol.kind === vscode.SymbolKind.Variable) {
-
             flattenedSymbols.push(symbol);
           }
           if (symbol.children && symbol.children.length > 0) {
@@ -88,41 +84,34 @@ function activate(context: vscode.ExtensionContext) {
       if (typeof test === "string" && test !== "self") {
 
         const regexVar = new RegExp(possibleSymbolsBefore + test + possibleSymbolsAfter, "g");
-        const regexNotFunc = new RegExp(possibleSymbolsBeforeFunc);
-        const regexNotSelf = new RegExp(selfSymbol);
         var match;
         while (match = regexVar.exec(text)) {
+          var startPos = activeEditor.document.positionAt(match.index + 1);
+          var endPos = activeEditor.document.positionAt(match.index + match[0].length - 1);
+          var decoration = {
+            range: new vscode.Range(startPos, endPos)
+          };
 
-          var isDef = text.substring(match.index - 3, match.index + 1);
-          var isSelf = text.substring(match.index - 4, match.index + 1);
-          if (!regexNotFunc.test(isDef) && !(regexNotSelf.test(isSelf))) {
-            var startPos = activeEditor.document.positionAt(match.index + 1);
-            var endPos = activeEditor.document.positionAt(match.index + match[0].length - 1);
-            var decoration = {
-              range: new vscode.Range(startPos, endPos)
-            };
+          // Push range of decoration
+          var matchedValue = match[0].substring(1, match[0].length - 1);
+          if (matches.has(matchedValue)) {
+            matches.get(matchedValue).push(decoration);
+          } else {
+            matches.set(matchedValue, [decoration]);
+          }
 
-            // Push range of decoration
-            var matchedValue = match[0].substring(1, match[0].length - 1);
-            if (matches.has(matchedValue)) {
-              matches.get(matchedValue).push(decoration);
-            } else {
-              matches.set(matchedValue, [decoration]);
+          // Create decoratoin style if needed
+          if (!styles.has(matchedValue)) {
+
+            var varColor = colors[countColor];
+            var variableDecorator = vscode.window.createTextEditorDecorationType({
+              color: varColor
+            });
+            countColor = countColor + 1;
+            if (countColor === 5) {
+              countColor = 0;
             }
-
-            // Create decoratoin style if needed
-            if (!styles.has(matchedValue)) {
-
-              var varColor = colors[countColor];
-              var variableDecorator = vscode.window.createTextEditorDecorationType({
-                color: varColor
-              });
-              countColor = countColor + 1;
-              if (countColor === 5) {
-                countColor = 0;
-              }
-              styles.set(matchedValue, variableDecorator);
-            }
+            styles.set(matchedValue, variableDecorator);
           }
         }
       }
