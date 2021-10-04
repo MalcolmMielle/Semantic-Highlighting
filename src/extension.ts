@@ -28,18 +28,18 @@ function activate(context: vscode.ExtensionContext) {
       "vscode.executeDocumentSymbolProvider",
       editor.document.uri
     ).then(results => {
-      if(!results) {
+      if (!results) {
         return [];
       }
 
       const flattenedSymbols: vscode.DocumentSymbol[] = [];
       const addSymbols = (flattenedSymbols: vscode.DocumentSymbol[], results: vscode.DocumentSymbol[]) => {
         results.forEach((symbol: vscode.DocumentSymbol) => {
-          if(symbol.kind === vscode.SymbolKind.Variable ) {
+          if (symbol.kind === vscode.SymbolKind.Variable) {
 
             flattenedSymbols.push(symbol);
           }
-          if(symbol.children && symbol.children.length > 0) {
+          if (symbol.children && symbol.children.length > 0) {
             addSymbols(flattenedSymbols, symbol.children);
           }
         });
@@ -49,7 +49,7 @@ function activate(context: vscode.ExtensionContext) {
 
       return flattenedSymbols.sort((x: vscode.DocumentSymbol, y: vscode.DocumentSymbol) => {
         const lineDiff = x.selectionRange.start.line - y.selectionRange.start.line;
-        if(lineDiff === 0) {
+        if (lineDiff === 0) {
           return x.selectionRange.start.character - y.selectionRange.start.character;
         }
         return lineDiff;
@@ -64,18 +64,16 @@ function activate(context: vscode.ExtensionContext) {
 
   init(settings);
 
-  function updateDecorations() {
+  async function updateDecorations() {
 
     if (!activeEditor || !activeEditor.document) {
-        return;
+      return;
     }
 
-    refreshTree(activeEditor);
+    await refreshTree(activeEditor);
     varNames.clear();
     for (let i = 0; i < tree.length; i++) {
-      var line = activeEditor.document.lineAt(tree[i].selectionRange.start.line);
-      var word = line.text.substring(tree[i].selectionRange.start.character, tree[i].selectionRange.end.character);
-      var name = word.split(/[:=]/)[0];
+      let name = tree[i].name;
       if (name.length > 3) {
         varNames.add(name);
       }
@@ -88,7 +86,6 @@ function activate(context: vscode.ExtensionContext) {
     for (let i = 0; i < a.length; i++) {
       var test = a[i];
       if (typeof test === "string" && test !== "self") {
-        const variableDecoration: vscode.DecorationOptions[] = [];
 
         const regexVar = new RegExp(possibleSymbolsBefore + test + possibleSymbolsAfter, "g");
         const regexNotFunc = new RegExp(possibleSymbolsBeforeFunc);
@@ -98,15 +95,15 @@ function activate(context: vscode.ExtensionContext) {
 
           var isDef = text.substring(match.index - 3, match.index + 1);
           var isSelf = text.substring(match.index - 4, match.index + 1);
-          if(!regexNotFunc.test(isDef) && !(regexNotSelf.test(isSelf))){
+          if (!regexNotFunc.test(isDef) && !(regexNotSelf.test(isSelf))) {
             var startPos = activeEditor.document.positionAt(match.index + 1);
             var endPos = activeEditor.document.positionAt(match.index + match[0].length - 1);
             var decoration = {
-                range: new vscode.Range(startPos, endPos)
+              range: new vscode.Range(startPos, endPos)
             };
 
             // Push range of decoration
-            var matchedValue = match[0].substring(1, match[0].length-1);
+            var matchedValue = match[0].substring(1, match[0].length - 1);
             if (matches.has(matchedValue)) {
               matches.get(matchedValue).push(decoration);
             } else {
@@ -114,14 +111,14 @@ function activate(context: vscode.ExtensionContext) {
             }
 
             // Create decoratoin style if needed
-            if(!styles.has(matchedValue)){
+            if (!styles.has(matchedValue)) {
 
               var varColor = colors[countColor];
               var variableDecorator = vscode.window.createTextEditorDecorationType({
                 color: varColor
               });
               countColor = countColor + 1;
-              if (countColor === 5){
+              if (countColor === 5) {
                 countColor = 0;
               }
               styles.set(matchedValue, variableDecorator);
@@ -140,6 +137,7 @@ function activate(context: vscode.ExtensionContext) {
     for (let [key, _] of styles) {
       if (matches.has(key) === false) {
         styles.get(key).dispose();
+        styles.delete(key);
       }
     }
 
@@ -147,40 +145,40 @@ function activate(context: vscode.ExtensionContext) {
 
 
   context.subscriptions.push(vscode.commands.registerCommand('semantichighlights.toggleSemanticHighlights', function () {
-      settings.update('isEnable', !settings.get('isEnable'), true).then(function () {
-          triggerUpdateDecorations();
-      });
+    settings.update('isEnable', !settings.get('isEnable'), true).then(function () {
+      triggerUpdateDecorations();
+    });
   }));
 
   function triggerUpdateDecorations() {
-      timeout && clearTimeout(timeout);
-      timeout = setTimeout(updateDecorations, 0);
+    timeout && clearTimeout(timeout);
+    timeout = setTimeout(updateDecorations, 0);
   }
 
   if (activeEditor) {
-      triggerUpdateDecorations();
+    triggerUpdateDecorations();
   }
 
   window.onDidChangeActiveTextEditor(function (editor) {
-      activeEditor = editor;
-      if (editor) {
-          triggerUpdateDecorations();
-      }
+    activeEditor = editor;
+    if (editor) {
+      triggerUpdateDecorations();
+    }
   }, null, context.subscriptions);
 
   workspace.onDidChangeTextDocument(function (event) {
-      if (activeEditor && event.document === activeEditor.document) {
-          triggerUpdateDecorations();
-      }
+    if (activeEditor && event.document === activeEditor.document) {
+      triggerUpdateDecorations();
+    }
   }, null, context.subscriptions);
 
   workspace.onDidChangeConfiguration(function () {
-      settings = workspace.getConfiguration('todohighlight');
+    settings = workspace.getConfiguration('todohighlight');
 
-      //NOTE: if disabled, do not re-initialize the data or we will not be able to clear the style immediatly via 'toggle highlight' command
-      if (!settings.get('isEnable')) {return;}
+    //NOTE: if disabled, do not re-initialize the data or we will not be able to clear the style immediatly via 'toggle highlight' command
+    if (!settings.get('isEnable')) { return; }
 
-      triggerUpdateDecorations();
+    triggerUpdateDecorations();
   }, null, context.subscriptions);
 
 
