@@ -34,7 +34,8 @@
 		"vscode:prepublish": "npm run compile",
 		"compile": "tsc -p ./",
 		"lint": "eslint . --ext .ts,.tsx",
-		"watch": "tsc -watch -p ./"
+		"watch": "tsc -watch -p ./",
+		"deploy": "vsce publish --yarn"
 	},
 	"devDependencies": {
 		"@types/node": "^12.12.0",
