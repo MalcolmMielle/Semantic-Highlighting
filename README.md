@@ -4,11 +4,13 @@ Colorizes each variable with their individual color.
 
 Compatible with python and pylance.
 
-WARNING: need pylance active AND a modification before it triggers.
-
 ## Features
 
+Before:
+
 ![before](https://gitlab.com/MalcolmMielle/semantic-highlighting/-/raw/main/images/before.png)
+
+After:
 
 ![after](https://gitlab.com/MalcolmMielle/semantic-highlighting/-/raw/main/images/after.png)
 
