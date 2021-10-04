@@ -19,19 +19,6 @@
 		"onLanguage:python"
 	],
 	"main": "./out/extension.js",
-	"contributes": {
-		"colors": [
-			{
-				"id": "myextension.largeNumberBackground",
-				"description": "Background decoration color for large numbers",
-				"defaults": {
-					"dark": "#FF000055",
-					"light": "#FF000055",
-					"highContrast": "#FF000055"
-				}
-			}
-		]
-	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
 		"compile": "tsc -p ./",
@@ -50,7 +37,10 @@
 	"keywords": [
 		"python",
 		"semantic",
-		"highlight"
+		"highlight",
+		"pycharm",
+		"kdevelop",
+		"rainbow"
 	],
 	"dependencies": {
 		"vsce": "^1.100.1"

@@ -13,8 +13,10 @@ function activate(context: vscode.ExtensionContext) {
   let timeout: NodeJS.Timer | undefined = undefined;
   var activeEditor = window.activeTextEditor;
 
-  var possibleSymbolsBefore = '[,\\s\\.=\\)\\(\\[\\]\\>\\-\\:\r\n{]';
+  var possibleSymbolsBefore = '[,\\s\\=\\)\\(\\[\\]\\>\\-\\:\r\n{]';
   var possibleSymbolsAfter = '[,\\s\\.=\\)\\[\\]\\>\\-\\:\r\n}]';
+  var selfKeyword = "self";
+  var assignment = '[(->)\\.]';
 
   let tree: Array<vscode.DocumentSymbol> = [];
   var settings = workspace.getConfiguration('semantichighlights');
@@ -77,16 +79,20 @@ function activate(context: vscode.ExtensionContext) {
 
     var text = activeEditor.document.getText();
 
-    var a = Array.from(varNames).sort();
+    let a = Array.from(varNames).sort();
     let matches = new Map();
     for (let i = 0; i < a.length; i++) {
-      var test = a[i];
-      if (typeof test === "string" && test !== "self") {
+      let test = a[i];
+      const regexVar = new RegExp(possibleSymbolsBefore + test + possibleSymbolsAfter, "g");
+      let match;
+      while (match = regexVar.exec(text)) {
 
-        const regexVar = new RegExp(possibleSymbolsBefore + test + possibleSymbolsAfter, "g");
-        var match;
-        while (match = regexVar.exec(text)) {
-          var startPos = activeEditor.document.positionAt(match.index + 1);
+        let assign = selfKeyword + assignment;
+        const selfAssign = new RegExp(assign, "g");
+        let maybeAssignString = text.substring(match.index + 1 - assign.length, match.index + 1);
+
+        if (!selfAssign.test(maybeAssignString)) {
+          let startPos = activeEditor.document.positionAt(match.index + 1);
           var endPos = activeEditor.document.positionAt(match.index + match[0].length - 1);
           var decoration = {
             range: new vscode.Range(startPos, endPos)
