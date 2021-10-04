@@ -1,0 +1,23 @@
+# Contents of .gitlab-ci.yml
+
+image: node:12-alpine
+
+stages:
+  - build
+
+before_script:
+  - npm install
+
+vsce:build:
+  stage: build
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: manual
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      allow_failure: true
+  script:
+    - npm install -g vsce
+    - vsce package
+  artifacts:
+    paths:
+      - semantic-highliting-0.0.1.vsix
