@@ -14,18 +14,11 @@ After:
 
 ![after](https://gitlab.com/MalcolmMielle/semantic-highlighting/-/raw/main/images/after.png)
 
-<!-- > Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow. -->
 
-<!-- ## Extension Settings
+## How to contribute
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something -->
+If you're on GitHub, head to the GitLab repo of this extension and submit Issues or PR.
+Help is always welcomed!
 
 ## Release Notes
 
