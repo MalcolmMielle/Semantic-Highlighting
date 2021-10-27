@@ -1,9 +1,14 @@
 # Change Log
 
-All notable changes to the "semantic-highlights" extension will be documented in this file.
+## Version 0.5.0
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+* Add a change log.
+* Add setting to choose to highlight colors.
+
+## Version 0.4.0
+
+* Initial release.
 
 ## [Unreleased]
 
-- Initial release
+- Open to suggestions.

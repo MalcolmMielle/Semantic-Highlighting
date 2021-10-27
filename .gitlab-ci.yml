@@ -4,6 +4,7 @@ image: node:12-alpine
 
 stages:
   - build
+  - deploy
 
 before_script:
   - npm install
@@ -18,6 +19,11 @@ vsce:build:
   script:
     - npm install -g vsce
     - vsce package
-  artifacts:
-    paths:
-      - semantic-highliting-0.0.1.vsix
+
+vsce:deploy:
+  stage: deploy
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  script:
+    - npm install vsce --save-dev
+    - npm run deploy
