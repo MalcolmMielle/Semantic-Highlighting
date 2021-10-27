@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 0.6.0
+
+* Add support for all languages.
+
 ## Version 0.5.0
 
 * Add a change log.

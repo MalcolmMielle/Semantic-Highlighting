@@ -1,7 +1,7 @@
 {
 	"name": "semantic-highlighting",
 	"description": "Does semantic highlight like Kdevelop and pycharm",
-	"version": "0.5.0",
+	"version": "0.6.0",
 	"publisher": "MalcolmMielle",
 	"license": "MIT",
 	"icon": "images/coding.png",
@@ -10,9 +10,20 @@
 		"vscode": "^1.32.0"
 	},
 	"contributes": {
+		"commands": [
+			{
+				"command": "semantic-highlighting.toggleSemanticHighlights",
+				"title": "Toggle semantic highlighting"
+			}
+		],
 		"configuration": {
 			"title": "SemanticHighlightingColors",
 			"properties": {
+				"semantic-highlighting.isEnable": {
+					"type": "boolean",
+					"default": true,
+					"description": "Enable or disable the highlight"
+				},
 				"semantic-highlighting.colors": {
 					"type": "array",
 					"items": {
@@ -37,7 +48,7 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onLanguage:python"
+		"onStartupFinished"
 	],
 	"main": "./out/extension.js",
 	"scripts": {
@@ -61,7 +72,9 @@
 		"highlight",
 		"pycharm",
 		"kdevelop",
-		"rainbow"
+		"rainbow",
+		"identifier",
+		"color"
 	],
 	"dependencies": {
 		"vsce": "^1.100.1"
