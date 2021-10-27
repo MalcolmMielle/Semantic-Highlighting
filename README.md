@@ -4,6 +4,8 @@ Colorizes each variable with their individual color.
 
 Works with any language that has semantic tokens.
 
+Color used for the variables can be customized in the settings.
+
 ## Features
 
 Before:
