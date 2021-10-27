@@ -67,10 +67,8 @@ function activate(context: vscode.ExtensionContext) {
       else {
         removeAll();
       }
-
     });
   }));
-
 
   window.onDidChangeActiveTextEditor(function (editor) {
     activeEditor = editor;

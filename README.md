@@ -2,7 +2,7 @@
 
 Colorizes each variable with their individual color.
 
-Compatible with python and pylance.
+Works with any language that has semantic tokens.
 
 ## Features
 
