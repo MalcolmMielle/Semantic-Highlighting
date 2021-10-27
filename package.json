@@ -10,9 +10,20 @@
 		"vscode": "^1.32.0"
 	},
 	"contributes": {
+		"commands": [
+			{
+				"command": "semantic-highlighting.toggleSemanticHighlights",
+				"title": "Toggle semantic highlighting"
+			}
+		],
 		"configuration": {
 			"title": "SemanticHighlightingColors",
 			"properties": {
+				"semantic-highlighting.isEnable": {
+					"type": "boolean",
+					"default": true,
+					"description": "Enable or disable the highlight"
+				},
 				"semantic-highlighting.colors": {
 					"type": "array",
 					"items": {
@@ -37,7 +48,7 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onLanguage:python"
+		"onStartupFinished"
 	],
 	"main": "./out/extension.js",
 	"scripts": {
