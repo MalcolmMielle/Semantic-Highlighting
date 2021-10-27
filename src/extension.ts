@@ -9,7 +9,8 @@ function activate(context: vscode.ExtensionContext) {
   let styles = new Map();
   var countColor = 0;
 
-  let colors: Array<string> = ["#529D52", "#BE7070", "#3D7676", "#BE9970", "#9D527C"];
+  const configuration = vscode.workspace.getConfiguration('semantic-highlighting');
+  let colors: Array<string> = configuration.get('colors') as string[];
   let timeout: NodeJS.Timer | undefined = undefined;
   var activeEditor = window.activeTextEditor;
 
@@ -63,6 +64,7 @@ function activate(context: vscode.ExtensionContext) {
   init(settings);
 
   async function updateDecorations() {
+    colors = configuration.get('colors') as string[];
 
     if (!activeEditor || !activeEditor.document) {
       return;
@@ -106,7 +108,7 @@ function activate(context: vscode.ExtensionContext) {
             matches.set(matchedValue, [decoration]);
           }
 
-          // Create decoratoin style if needed
+          // Create decoration style if needed
           if (!styles.has(matchedValue)) {
 
             var varColor = colors[countColor];
@@ -114,7 +116,7 @@ function activate(context: vscode.ExtensionContext) {
               color: varColor
             });
             countColor = countColor + 1;
-            if (countColor === 5) {
+            if (countColor === colors.length) {
               countColor = 0;
             }
             styles.set(matchedValue, variableDecorator);
