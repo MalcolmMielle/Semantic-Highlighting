@@ -72,7 +72,9 @@
 		"highlight",
 		"pycharm",
 		"kdevelop",
-		"rainbow"
+		"rainbow",
+		"identifier",
+		"color"
 	],
 	"dependencies": {
 		"vsce": "^1.100.1"
