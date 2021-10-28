@@ -1,10 +1,10 @@
 # Semantic Highlights
 
 Colorizes each variable with their individual color.
-
-Works with any language that has semantic tokens.
+Works with *any language* that has semantic tokens.
 
 Color used for the variables can be customized in the settings.
+The extension can be toggled on/off be using the command "Toggle semantic highlighting" (needs a modification of the file to trigger).
 
 ## Features
 

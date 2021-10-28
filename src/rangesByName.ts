@@ -77,7 +77,7 @@ export function rangesByName(data: vscode.SemanticTokens, legend: vscode.Semanti
         const range = new vscode.Range(line, column, line, column + length);
         const name = editor.document.getText(range);
         const kind = legend.tokenTypes[kindIndex];
-        if ('variable' === kind) {
+        if ('variable' === kind && name.length > 2) {
             if (accumulator.has(name)) {
                 accumulator.get(name)!.push(range);
             } else {
