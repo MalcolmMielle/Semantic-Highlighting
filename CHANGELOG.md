@@ -3,6 +3,7 @@
 ## Version 0.7.0
 
 * Can toggle extension on/off with the command "Toggle semantic highlighting".
+
 ## Version 0.6.0
 
 * Add support for all languages.
