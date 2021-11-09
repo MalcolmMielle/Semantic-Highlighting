@@ -1,7 +1,7 @@
 {
 	"name": "semantic-highlighting",
 	"description": "Does semantic highlight like Kdevelop and pycharm",
-	"version": "0.7.0",
+	"version": "0.9.0",
 	"publisher": "MalcolmMielle",
 	"license": "MIT",
 	"icon": "images/coding.png",
@@ -56,7 +56,7 @@
 		"compile": "tsc -p ./",
 		"lint": "eslint . --ext .ts,.tsx",
 		"watch": "tsc -watch -p ./",
-		"deploy": "vsce publish --yarn"
+		"deploy": "yarn && vsce publish --yarn"
 	},
 	"devDependencies": {
 		"@types/node": "^12.12.0",
