@@ -1,6 +1,6 @@
 # Contents of .gitlab-ci.yml
 
-image: node:12-alpine
+image: node:12-buster
 
 stages:
   - build
@@ -18,7 +18,7 @@ vsce:build:
       allow_failure: true
   script:
     - npm install -g vsce
-    - vsce package
+    - yarn && vsce package --yarn
 
 vsce:deploy:
   stage: deploy
