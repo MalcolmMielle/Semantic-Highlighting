@@ -6,9 +6,6 @@ stages:
   - build
   - deploy
 
-before_script:
-  - npm install
-
 vsce:build:
   stage: build
   rules:
