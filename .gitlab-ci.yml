@@ -1,13 +1,10 @@
 # Contents of .gitlab-ci.yml
 
-image: node:12-alpine
+image: node:14-buster
 
 stages:
   - build
   - deploy
-
-before_script:
-  - npm install
 
 vsce:build:
   stage: build
@@ -17,8 +14,9 @@ vsce:build:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       allow_failure: true
   script:
+    - npm -g config set user root
     - npm install -g vsce
-    - vsce package
+    - yarn && vsce package --yarn
 
 vsce:deploy:
   stage: deploy
