@@ -17,7 +17,8 @@ vsce:build:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       allow_failure: true
   script:
-    - npm install vsce
+    - npm -g config set user root
+    - npm install -g vsce
     - yarn && vsce package --yarn
 
 vsce:deploy:
