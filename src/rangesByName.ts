@@ -62,7 +62,7 @@ import * as vscode from 'vscode';
  * *NOTE*: When doing edits, it is possible that multiple edits occur until VS Code decides to invoke the semantic tokens provider.
  * *NOTE*: If the provider cannot temporarily compute semantic tokens, it can indicate this by throwing an error with the message 'Busy'.
  */
-export function rangesByName(data: vscode.SemanticTokens, legend: vscode.SemanticTokensLegend, editor: vscode.TextEditor): Map<string, vscode.Range[]> {
+export function rangesByName(data: vscode.SemanticTokens, legend: vscode.SemanticTokensLegend, editor: vscode.TextEditor, highlightGlobals: boolean): Map<string, vscode.Range[]> {
     const accumulator: Map<string, vscode.Range[]> = new Map();
     // const accumulator: Record<string, vscode.Range[]> = {};
     const recordSize = 5;
@@ -70,14 +70,16 @@ export function rangesByName(data: vscode.SemanticTokens, legend: vscode.Semanti
     let column = 0;
 
     for (let i = 0; i < data.data.length; i += recordSize) {
-        const [deltaLine, deltaColumn, length, kindIndex, _] = data.data.slice(i, i + recordSize);
+        console.log(legend);
+        const [deltaLine, deltaColumn, length, kindIndex, modifierIndex] = data.data.slice(i, i + recordSize);
         column = deltaLine === 0 ? column : 0;
         line += deltaLine;
         column += deltaColumn;
         const range = new vscode.Range(line, column, line, column + length);
         const name = editor.document.getText(range);
         const kind = legend.tokenTypes[kindIndex];
-        if ('variable' === kind && name.length > 2) {
+        const modifiers = legend.tokenModifiers.filter((_, index) => (modifierIndex & (1 << index)) !== 0);
+        if (['variable', 'parameter'].includes(kind) && name.length > 2 && (highlightGlobals || !modifiers.includes('global'))) {
             if (accumulator.has(name)) {
                 accumulator.get(name)!.push(range);
             } else {
