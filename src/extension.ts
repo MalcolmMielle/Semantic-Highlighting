@@ -11,6 +11,7 @@ let colors: Array<string> = settings.get('colors') as string[];
 var activeEditor = window.activeTextEditor;
 
 async function updateDecorations() {
+  let highlightGlobals : boolean = settings.get('highlightGlobals') as boolean;
   if (!activeEditor || !activeEditor.document) {
     return;
   }
@@ -19,7 +20,7 @@ async function updateDecorations() {
   const tokensData: vscode.SemanticTokens | undefined = await vscode.commands.executeCommand('vscode.provideDocumentSemanticTokens', uri);
 
   if (!tokensData || !legend) { return; }
-  const rangesBySymbolName = rangesByName(tokensData, legend, activeEditor);
+  const rangesBySymbolName = rangesByName(tokensData, legend, activeEditor, highlightGlobals);
 
   // Add all decorations
   for (let [key, value] of rangesBySymbolName) {

@@ -24,6 +24,11 @@
 					"default": true,
 					"description": "Enable or disable the highlight"
 				},
+				"semantic-highlighting.highlightGlobals": {
+					"type": "boolean",
+					"default": false,
+					"description": "Enable or disable highlighting of global variables"
+				},
 				"semantic-highlighting.colors": {
 					"type": "array",
 					"items": {
