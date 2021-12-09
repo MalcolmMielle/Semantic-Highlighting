@@ -54,6 +54,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tr>
     <td align="center"><a href="http://malcolmmielle.wordpress.com/"><img src="https://avatars.githubusercontent.com/u/4457840?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Malcolm Mielle</b></sub></a><br /><a href="https://github.com/MalcolmMielle/Semantic-Highlighting/commits?author=MalcolmMielle" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/gracicot"><img src="https://avatars.githubusercontent.com/u/2906673?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Guillaume Racicot</b></sub></a><br /><a href="https://github.com/MalcolmMielle/Semantic-Highlighting/commits?author=gracicot" title="Code">💻</a></td>
   </tr>
 </table>
 
