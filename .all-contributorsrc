@@ -1,0 +1,24 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "MalcolmMielle",
+      "name": "Malcolm Mielle",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4457840?v=4",
+      "profile": "http://malcolmmielle.wordpress.com/",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "Semantic-Highlighting",
+  "projectOwner": "MalcolmMielle",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
