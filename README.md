@@ -1,4 +1,8 @@
 # Semantic Highlights
+![VSCode](https://img.shields.io/badge/Made%20for-VSCode-1f425f.svg) ![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/malcolmmielle.semantic-highlighting) ![Visual Studio Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/malcolmmielle.semantic-highlighting)
+
+![CICD](https://github.com/MalcolmMielle/Semantic-Highlighting/actions/workflows/main.yml/badge.svg) 
+
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
