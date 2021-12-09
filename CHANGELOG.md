@@ -1,7 +1,10 @@
 # Change Log
 
+## Version 0.11.0
 
-## Version 0.1.0
+* Switched to Github instead of Gitlab for visibility and collaboration.
+
+## Version 0.10.0
 
 * Colorize parameters on methods and ignore global variable as in Kdevelop.
   Thanks @gracicot.
