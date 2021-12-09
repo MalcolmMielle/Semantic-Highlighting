@@ -22,6 +22,10 @@ After:
 If you're on GitHub, head to the GitLab repo of this extension and submit Issues or PR.
 Help is always welcomed!
 
+### Contributors
+
+[![](https://secure.gravatar.com/avatar/22ba5a5469953d6ab315e6c2c02a1ee2?s=180&d=identicon)](https://gitlab.com/gracicot)
+
 ## Release Notes
 
 First release :).
