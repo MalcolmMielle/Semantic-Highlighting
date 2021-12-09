@@ -2,6 +2,10 @@
 
 ## Version 0.11.0
 
+* Correct image links.
+
+## Version 0.11.0
+
 * Switched to Github instead of Gitlab for visibility and collaboration.
 
 ## Version 0.10.0
