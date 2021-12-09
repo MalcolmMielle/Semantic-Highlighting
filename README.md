@@ -13,11 +13,11 @@ The extension can be toggled on/off be using the command "Toggle semantic highli
 
 Before:
 
-![before](https://gitlab.com/MalcolmMielle/semantic-highlighting/-/raw/main/images/before.png)
+![before](https://raw.githubusercontent.com/MalcolmMielle/Semantic-Highlighting/main/images/before.png)
 
 After:
 
-![after](https://gitlab.com/MalcolmMielle/semantic-highlighting/-/raw/main/images/after.png)
+![after](https://raw.githubusercontent.com/MalcolmMielle/Semantic-Highlighting/main/images/after.png)
 
 
 ## How to contribute
