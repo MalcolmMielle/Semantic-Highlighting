@@ -1,5 +1,12 @@
 # Change Log
 
+
+## Version 0.1.0
+
+* Colorize parameters on methods and ignore global variable as in Kdevelop.
+  Thanks @gracicot.
+
+
 ## Version 0.7.0
 
 * Can toggle extension on/off with the command "Toggle semantic highlighting".
