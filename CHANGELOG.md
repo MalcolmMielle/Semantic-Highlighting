@@ -1,5 +1,9 @@
 # Change Log
 
+## version 0.13.0
+
+Removed coloring of labels (`keyword parameters` in python).
+
 ## Version 0.12.0
 
 * Correct image links.

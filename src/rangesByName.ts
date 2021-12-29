@@ -63,14 +63,14 @@ import * as vscode from 'vscode';
  * *NOTE*: If the provider cannot temporarily compute semantic tokens, it can indicate this by throwing an error with the message 'Busy'.
  */
 export function rangesByName(data: vscode.SemanticTokens, legend: vscode.SemanticTokensLegend, editor: vscode.TextEditor, highlightGlobals: boolean): Map<string, vscode.Range[]> {
-    const accumulator: Map<string, vscode.Range[]> = new Map();
-    // const accumulator: Record<string, vscode.Range[]> = {};
+    const accumulatorParam: Map<string, vscode.Range[]> = new Map();
+    const accumulatorVar: Map<string, vscode.Range[]> = new Map();
+    const accumulatorWithDec: Map<string, boolean> = new Map();
     const recordSize = 5;
     let line = 0;
     let column = 0;
 
     for (let i = 0; i < data.data.length; i += recordSize) {
-        console.log(legend);
         const [deltaLine, deltaColumn, length, kindIndex, modifierIndex] = data.data.slice(i, i + recordSize);
         column = deltaLine === 0 ? column : 0;
         line += deltaLine;
@@ -79,13 +79,53 @@ export function rangesByName(data: vscode.SemanticTokens, legend: vscode.Semanti
         const name = editor.document.getText(range);
         const kind = legend.tokenTypes[kindIndex];
         const modifiers = legend.tokenModifiers.filter((_, index) => (modifierIndex & (1 << index)) !== 0);
-        if (['variable', 'parameter'].includes(kind) && name.length > 2 && (highlightGlobals || !modifiers.includes('global'))) {
-            if (accumulator.has(name)) {
-                accumulator.get(name)!.push(range);
-            } else {
-                accumulator.set(name, [range]);
+        if (highlightGlobals || !modifiers.includes('global') && name.length > 2) {
+            if ('variable' === kind) {
+                if (accumulatorVar.has(name)) {
+                    accumulatorVar.get(name)!.push(range);
+                } else {
+                    accumulatorVar.set(name, [range]);
+                }
+            }
+            else if (kind === 'parameter' && !modifiers.includes('label')) {
+                // Check for declaration to not highlight labels in python since the modifier
+                // label is not declared by pylance.
+                // See https://github.com/microsoft/pylance-release/issues/2196
+                if (!accumulatorWithDec.has(name)) {
+                    accumulatorWithDec.set(name, false);
+                }
+                if (modifiers.includes('declaration')) {
+                    accumulatorWithDec.set(name, true);
+                }
+
+                if (accumulatorParam.has(name)) {
+                    accumulatorParam.get(name)!.push(range);
+                } else {
+                    accumulatorParam.set(name, [range]);
+                }
             }
         }
     }
-    return accumulator;
+
+    // The cpp language server does not implement the declaration modifier
+    // hence we colorize everything
+    if (editor.document.languageId === "cpp") {
+        for (let [name, isDeclared] of accumulatorWithDec) {
+            accumulatorWithDec.set(name, true);
+        }
+    }
+    for (let [name, isDeclared] of accumulatorWithDec) {
+        if (!isDeclared) {
+            accumulatorParam.delete(name);
+        }
+        else {
+            if (accumulatorVar.has(name)) {
+                accumulatorVar.set(name,
+                    accumulatorVar.get(name)!.concat(accumulatorParam.get(name)!));
+            } else {
+                accumulatorVar.set(name, accumulatorParam.get(name)!);
+            }
+        }
+    }
+    return accumulatorVar;
 }
