@@ -10,6 +10,9 @@
 Colorizes each variable with their individual color.
 Works with *any language* that has semantic tokens.
 
+When a variable name is declared, it randomly cycles through a list of colors upon modification.
+For example, changing 'foo = 2' to 'foon = 2' will result in a randomized color for the variable, only at its declaration.
+
 Color used for the variables can be customized in the settings.
 The extension can be toggled on/off be using the command "Toggle semantic highlighting" (needs a modification of the file to trigger).
 
